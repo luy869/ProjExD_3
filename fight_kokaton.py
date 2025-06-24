@@ -62,7 +62,7 @@ class Bird:
         引数1 num：こうかとん画像ファイル名の番号
         引数2 screen：画面Surface
         """
-        self.img = pg.transform.rotozoom(pg.image.load(f"fig/{num}.png"), 0, 0.9)
+        self.img = pg.transform.rotozoom(pg.image.load(f"fig/9.png"), 0, 0.9)
         screen.blit(self.img, self.rct)
 
     def update(self, key_lst: list[bool], screen: pg.Surface):
@@ -162,6 +162,9 @@ def main():
                 # 衝突したら両方をNoneにして消滅させる
                 beam = None
                 bomb = None
+                bird.change_img(9, screen)
+                
+
 
         # こうかとんと爆弾の衝突判定
         if bomb is not None:
