@@ -205,7 +205,7 @@ def main():
     bird = Bird((300, 200))
     beams = []
     clock = pg.time.Clock()
-    tmr = 0
+    frame_count = 0
     score = Score()
     explosions = []
     
@@ -243,7 +243,7 @@ def main():
                         del bombs[j]
                         beams[i] = None
                         score.add_score(1)
-                        bird.change_img(tmr, screen)
+                        bird.change_img(frame_count, screen)
                         break
 
         # リストの更新
@@ -267,7 +267,7 @@ def main():
         score.update(screen)
 
         pg.display.update()
-        tmr += 1
+        frame_count += 1
         clock.tick(50)
 
 if __name__ == "__main__":
