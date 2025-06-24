@@ -3,8 +3,9 @@ import random
 import sys
 import time
 import pygame as pg
+import math
 
-
+NUM_OF_BOMBS = 5 #爆弾の数
 WIDTH = 1100  # ゲームウィンドウの幅
 HEIGHT = 650  # ゲームウィンドウの高さ
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -113,18 +114,19 @@ class Bomb:
     """
     爆弾に関するクラス
     """
-    def __init__(self, color: tuple[int, int, int], rad: int):
+    def __init__(self, vxy, velocity):
         """
-        引数に基づき爆弾円Surfaceを生成する
-        引数1 color：爆弾円の色タプル
-        引数2 rad：爆弾円の半径
+        爆弾を初期化する
+        引数1 vxy：爆弾の初期座標のタプル
+        引数2 velocity：爆弾の速度のタプル（例：(5, 5)）
         """
+        rad = 10  # ここで半径を明示的に設定
         self.img = pg.Surface((2*rad, 2*rad))
-        pg.draw.circle(self.img, color, (rad, rad), rad)
+        pg.draw.circle(self.img, (255, 0, 0), (rad, rad), rad)
         self.img.set_colorkey((0, 0, 0))
         self.rct = self.img.get_rect()
-        self.rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
-        self.vx, self.vy = +5, +5
+        self.rct.center = vxy
+        self.vx, self.vy = velocity  # velocity タプルから速度成分を取得
 
     def update(self, screen: pg.Surface):
         """
@@ -153,10 +155,18 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
-    bomb = Bomb((255, 0, 0), 10)
     beam = None  # ゲーム初期化時にはビームは存在しない
     clock = pg.time.Clock()
     tmr = 0
+
+    # 複数の爆弾を格納するリスト
+    bombs = []
+    # ランダムを使わず、一定の速度で初期化
+    for i in range(NUM_OF_BOMBS):
+        vx, vy = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+        bomb = Bomb((vx, vy), (3, 3))  # 全爆弾で同じ速度に設定
+        bombs.append(bomb)
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -188,7 +198,31 @@ def main():
 
         if beam is not None:
             beam.update(screen)
-
+    
+        # 爆弾とこうかとんの衝突判定（リスト内の各爆弾について）
+        for bomb in bombs:
+            if bomb is not None:
+                # こうかとんと爆弾の衝突判定
+                if bird.rct.colliderect(bomb.rct):
+                    gameover(screen)
+                    return
+    
+        # 爆弾とビームの衝突判定（リスト内の各爆弾について）
+        if beam is not None:
+            for i, bomb in enumerate(bombs):
+                if bomb is not None and beam.rct.colliderect(bomb.rct):
+                    # 衝突した爆弾とビームをNoneに
+                    bombs[i] = None
+                    beam = None
+                    break  # ビームがなくなったのでループを抜ける
+    
+        # 爆弾リストをNoneでない要素だけに更新
+        bombs = [bomb for bomb in bombs if bomb is not None]
+        
+        # 残った爆弾の更新
+        for bomb in bombs:
+            bomb.update(screen)
+    
         bird.update(key_lst, screen)
 
         if bomb is not None:
