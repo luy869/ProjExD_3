@@ -100,13 +100,10 @@ class Beam:
         # Birdのdireにアクセスし、こうかとんが向いている方向をvx, vyに代入
         vx, vy = bird.dire
         
-        # math.atan2(-vy, vx)で角度を求め、math.degrees()で弧度法から度数法に変換、rotozoomで回転
         angle = math.degrees(math.atan2(-vy, vx))
         self.img = pg.transform.rotozoom(self.img, angle, 1.0)
         
         # こうかとんのrctのwidthとheightおよび向いている方向を考慮した初期配置
-        # ビームの中心横座標 = こうかとんの中心横座標 + こうかとんの横幅×ビームの横速度÷5
-        # ビームの中心縦座標 = こうかとんの中心縦座標 + こうかとんの高さ×ビームの縦速度÷5
         self.rct = self.img.get_rect()
         self.rct.centerx = bird.rct.centerx + bird.rct.width * vx // 5
         self.rct.centery = bird.rct.centery + bird.rct.height * vy // 5
