@@ -83,7 +83,8 @@ class Bird:
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.img = __class__.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
-        
+
+
 class Beam:
     """
     こうかとんが放つビームに関するクラス
@@ -153,19 +154,18 @@ def main():
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
-    beam = None
+    beam = None  # ゲーム初期化時にはビームは存在しない
     clock = pg.time.Clock()
-    
-    # tmrを初期化
     tmr = 0
-    
+
     # 複数の爆弾を格納するリスト
     bombs = []
+    # ランダムを使わず、一定の速度で初期化
     for i in range(NUM_OF_BOMBS):
         vx, vy = random.randint(0, WIDTH), random.randint(0, HEIGHT)
-        bomb = Bomb((vx, vy), (1, 1))  
+        bomb = Bomb((vx, vy), (3, 3))  # 全爆弾で同じ速度に設定
         bombs.append(bomb)
-
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -188,7 +188,7 @@ def main():
         # こうかとんと爆弾の衝突判定
         if bomb is not None:
             if bird.rct.colliderect(bomb.rct):
-                # 衝突したらゲームオーバー
+                # 衝突したらゲームオーバー処理などを行い、ループを抜ける
                 gameover(screen)
 
         key_lst = pg.key.get_pressed()
@@ -198,22 +198,24 @@ def main():
         if beam is not None:
             beam.update(screen)
     
-        # 爆弾とこうかとんの衝突判定
+        # 爆弾とこうかとんの衝突判定（リスト内の各爆弾について）
         for bomb in bombs:
             if bomb is not None:
+                # こうかとんと爆弾の衝突判定
                 if bird.rct.colliderect(bomb.rct):
                     gameover(screen)
                     return
     
-        # 爆弾とビームの衝突判定（
+        # 爆弾とビームの衝突判定（リスト内の各爆弾について）
         if beam is not None:
             for i, bomb in enumerate(bombs):
                 if bomb is not None and beam.rct.colliderect(bomb.rct):
-                    bombs[i] = None  # 爆弾をNoneに設定
+                    # 衝突した爆弾とビームをNoneに
+                    bombs[i] = None
                     beam = None
-                    bird.change_img(tmr, screen)
-                    break
-
+                    break  # ビームがなくなったのでループを抜ける
+    
+        # 爆弾リストをNoneでない要素だけに更新
         bombs = [bomb for bomb in bombs if bomb is not None]
         
         # 残った爆弾の更新
@@ -227,7 +229,6 @@ def main():
         if beam is not None:
             screen.blit(beam.img, beam.rct)
         screen.blit(bird.img, bird.rct)
-
 
         pg.display.update()
         tmr += 1
