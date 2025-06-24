@@ -171,7 +171,7 @@ class Explosion:
 
 class Score:
     """
-    消した爆弾の数を表示するクラス
+    消した爆弾の数を表示するクラスです
     """
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
