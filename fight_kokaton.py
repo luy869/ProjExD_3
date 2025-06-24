@@ -209,7 +209,7 @@ def main():
     score = Score()
     explosions = []
     
-    # 爆弾の生成
+    # 爆弾の作成
     bombs = []
     for i in range(NUM_OF_BOMBS):
         vx, vy = random.randint(0, WIDTH), random.randint(0, HEIGHT)
