@@ -83,6 +83,7 @@ class Bird:
             self.img = __class__.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
 
+    
 
 class Beam:
     """
@@ -104,8 +105,9 @@ class Beam:
         """
         if check_bound(self.rct) == (True, True):
             self.rct.move_ip(self.vx, self.vy)
-            screen.blit(self.img, self.rct)    
+            screen.blit(self.img, self.rct)  
 
+    
 
 class Bomb:
     """
@@ -136,6 +138,14 @@ class Bomb:
             self.vy *= -1
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
+
+
+def gameover(screen):
+    font = pg.font.Font(None, 80)
+    txt = font.render("Game Over", True, (255, 0, 0))
+    screen.blit(txt, [WIDTH/2 - 150, HEIGHT/2])
+    pg.display.update()
+    time.sleep(5)
 
 
 def main():
@@ -170,7 +180,7 @@ def main():
         if bomb is not None:
             if bird.rct.colliderect(bomb.rct):
                 # 衝突したらゲームオーバー処理などを行い、ループを抜ける
-                return
+                gameover(screen)
 
         key_lst = pg.key.get_pressed()
         if bomb is not None:
