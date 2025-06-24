@@ -178,8 +178,6 @@ def main():
 
         bird.update(key_lst, screen)
 
-        # 各オブジェクトの描画
-        # ※Noneチェックはblit前にも行うとより安全です
         if bomb is not None:
             screen.blit(bomb.img, bomb.rct)
         if beam is not None:
