@@ -156,18 +156,36 @@ def main():
                 beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
         
-        if bird.rct.colliderect(bomb.rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        # 爆弾とビームの衝突判定
+        if bomb is not None and beam is not None:
+            if beam.rct.colliderect(bomb.rct):
+                # 衝突したら両方をNoneにして消滅させる
+                beam = None
+                bomb = None
+
+        # こうかとんと爆弾の衝突判定
+        if bomb is not None:
+            if bird.rct.colliderect(bomb.rct):
+                # 衝突したらゲームオーバー処理などを行い、ループを抜ける
+                return
 
         key_lst = pg.key.get_pressed()
-        bird.update(key_lst, screen)
+        if bomb is not None:
+            bomb.update(screen)
+
         if beam is not None:
-            beam.update(screen)   
-        bomb.update(screen)
+            beam.update(screen)
+
+        bird.update(key_lst, screen)
+
+        # 各オブジェクトの描画
+        # ※Noneチェックはblit前にも行うとより安全です
+        if bomb is not None:
+            screen.blit(bomb.img, bomb.rct)
+        if beam is not None:
+            screen.blit(beam.img, beam.rct)
+        screen.blit(bird.img, bird.rct)
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
