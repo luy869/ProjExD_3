@@ -145,7 +145,7 @@ def gameover(screen):
     txt = font.render("Game Over", True, (255, 0, 0))
     screen.blit(txt, [WIDTH/2 - 150, HEIGHT/2])
     pg.display.update()
-    time.sleep(5)
+    time.sleep(3)
 
 
 def main():
